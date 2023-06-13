@@ -1,0 +1,94 @@
+name: "Maven docker build"
+
+on:
+  workflow_call:
+    inputs:
+      DOCKER_REGISTRY:
+        required: false
+        default: "registry.hub.docker.com"
+        type: string
+      DOCKER_REPO:
+         required: true
+         type: string    
+      DOCKER_USER:
+        required: true
+        default: "builder"
+        type: string
+      JAVA_VERSION:
+        required: true
+        type: string
+      JAVA_DISTRIBUTION:
+        required: true
+        default: "temurin"
+        type: string
+      JIB_JAVA_BASE:
+        required: true
+        default: "eclipse-temurin"
+        type: string
+      JIB_VERSION:
+        required: true
+        default: "3.3.0"
+        type: string
+      BUILD_ARGS:
+        required: false
+        default: ""
+        type: string
+      SKIP_TESTS:
+        required: false
+        default: "false"
+        type: string
+      USE_PULL_REPO:
+        required: false
+        type: string        
+        default: "false"
+      DEPLOY_URL: 
+        required: false
+        default: "INVALID"        
+        type: string                
+    secrets:
+      DOCKER_PASSWORD:
+        required: true
+      AUTH_TOKEN:
+        required: true
+
+jobs:
+  mvn_build:
+    name: "build maven docker image and deploy"
+    concurrency: 
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+    runs-on: [ubuntu-latest] 
+   
+    steps:
+      
+      - name: Docker Prepare
+        uses: bitbool-actions/docker-prepare@main
+        id: docker_prepare
+        with:
+          DOCKER_REGISTRY: "${{ inputs.DOCKER_REGISTRY }}"
+          DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
+          DOCKER_USER: "${{ inputs.DOCKER_USER }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+
+      - uses: actions/checkout@v3
+
+      - name: mvn build
+        uses: bitbool-actions/mvn-build@main
+        id: mvn_build
+        with:
+          JAVA_VERSION: "${{ inputs.JAVA_VERSION }}"
+          JAVA_DISTRIBUTION: "${{ inputs.JAVA_DISTRIBUTION }}"
+          SKIP_TESTS: "${{ inputs.SKIP_TESTS }}"
+          JIB_JAVA_BASE: "${{ inputs.JIB_JAVA_BASE }}"
+          JIB_VERSION: "${{ inputs.JIB_VERSION }}"
+          DOCKER_REGISTRY: "${{ inputs.DOCKER_REGISTRY }}"
+          DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
+          TAGS_CSV: "${{ steps.docker_prepare.outputs.tags_only_csv }}"
+
+      - uses: bitbool-actions/docker-compose-deploy@master
+        id: docker_deploy
+        with:
+          AUTH_TOKEN: "${{ secrets.AUTH_TOKEN }}"
+          USE_PULL_REPO: "${{ inputs.USE_PULL_REPO }}"
+          DEPLOY_URL: "${{ inputs.DEPLOY_URL }}"
+          IMAGES: "${{ steps.docker_prepare.outputs.images_with_tags }}"
