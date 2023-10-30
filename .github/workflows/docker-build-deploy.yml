@@ -76,7 +76,7 @@ jobs:
         shell: bash
         run: |
           echo "Looking for .github/envs/${{github.ref_name}}..."
-          (([ -f ".github/envs/default" ] && cat ".github/envs/default" ) || true)
+          (([ -f ".github/envs/${{github.ref_name}}" ] && cat ".github/envs/${{github.ref_name}}" ) || true)
           (([ -f ".github/envs/${{github.ref_name}}" ] && cat ".github/envs/${{github.ref_name}}" ) || true) >> $GITHUB_ENV
         if: ${{ inputs.USE_ENV_FILES == 'true' }}
 
