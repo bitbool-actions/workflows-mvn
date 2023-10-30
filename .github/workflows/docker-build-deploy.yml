@@ -68,14 +68,14 @@ jobs:
         shell: bash
         run: |
           echo "Looking for .github/envs/default..."
-          (([ -f ".github/envs/default" ] && . ".github/envs/default" | tee) || true) >> $GITHUB_ENV
+          (([ -f ".github/envs/default" ] && cat ".github/envs/default" | tee) || true) >> $GITHUB_ENV
         if: ${{ inputs.USE_ENV_FILES == 'true' }}
   
       - name: read branch env
         shell: bash
         run: |
           echo "Looking for .github/envs/${{github.ref_name}}..."
-          (([ -f ".github/envs/${{github.ref_name}}" ] && . ".github/envs/${{github.ref_name}}" | tee) || true) >> $GITHUB_ENV
+          (([ -f ".github/envs/${{github.ref_name}}" ] && cat ".github/envs/${{github.ref_name}}" | tee) || true) >> $GITHUB_ENV
         if: ${{ inputs.USE_ENV_FILES == 'true' }}
 
       - name: set deploy url env var from input
