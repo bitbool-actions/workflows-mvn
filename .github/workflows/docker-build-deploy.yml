@@ -64,22 +64,13 @@ jobs:
     runs-on: [ubuntu-latest] 
    
     steps:
-      - name: read default env
-        shell: bash
-        run: |
-          echo "Looking for .github/envs/default..."
-          (([ -f ".github/envs/default" ] && cat ".github/envs/default" ) || true)
-          (([ -f ".github/envs/default" ] && cat ".github/envs/default" ) || true) >> $GITHUB_ENV
-        if: ${{ inputs.USE_ENV_FILES == 'true' }}
-  
-      - name: read branch env
-        shell: bash
-        run: |
-          echo "Looking for .github/envs/${{github.ref_name}}..."
-          (([ -f ".github/envs/${{github.ref_name}}" ] && cat ".github/envs/${{github.ref_name}}" ) || true)
-          (([ -f ".github/envs/${{github.ref_name}}" ] && cat ".github/envs/${{github.ref_name}}" ) || true) >> $GITHUB_ENV
-        if: ${{ inputs.USE_ENV_FILES == 'true' }}
 
+      - name: Read env
+        uses: bitbool-actions/read-env@main
+        id: read_env
+        with:
+          USE_ENV_FILES: "${{ inputs.USE_ENV_FILES }}"
+    
       - name: set deploy url env var from input
         shell: bash
         run: |
