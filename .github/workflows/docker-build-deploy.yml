@@ -64,6 +64,17 @@ jobs:
     runs-on: [ubuntu-latest] 
    
     steps:
+        
+      - name: Docker Prepare
+        uses: bitbool-actions/docker-prepare@main
+        id: docker_prepare
+        with:
+          DOCKER_REGISTRY: "${{ inputs.DOCKER_REGISTRY }}"
+          DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
+          DOCKER_USER: "${{ inputs.DOCKER_USER }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+
+      - uses: actions/checkout@v3
 
       - name: Read env
         uses: bitbool-actions/read-env@main
@@ -77,17 +88,6 @@ jobs:
           echo DEPLOY_URL=${{ inputs.DEPLOY_URL }} >> $GITHUB_ENV
         if: ${{ inputs.DEPLOY_URL != 'INVALID' }}
         
-      - name: Docker Prepare
-        uses: bitbool-actions/docker-prepare@main
-        id: docker_prepare
-        with:
-          DOCKER_REGISTRY: "${{ inputs.DOCKER_REGISTRY }}"
-          DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
-          DOCKER_USER: "${{ inputs.DOCKER_USER }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-
-      - uses: actions/checkout@v3
-
       - name: mvn build
         uses: bitbool-actions/mvn-build@main
         id: mvn_build
