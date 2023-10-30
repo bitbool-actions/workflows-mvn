@@ -77,6 +77,12 @@ jobs:
           echo "Looking for .github/envs/${{github.ref_name}}..."
           (([ -f ".github/envs/${{github.ref_name}}" ] && . ".github/envs/${{github.ref_name}}" | tee) || true) >> $GITHUB_ENV
         if: ${{ inputs.USE_ENV_FILES == 'true' }}
+
+      - name: set deploy url env var from input
+        shell: bash
+        run: |
+          echo DEPLOY_URL=${{ inputs.DEPLOY_URL }} | tee >> $GITHUB_ENV
+        if: ${{ inputs.DEPLOY_URL != 'INVALID' }}
         
       - name: Docker Prepare
         uses: bitbool-actions/docker-prepare@main
@@ -107,5 +113,5 @@ jobs:
         with:
           AUTH_TOKEN: "${{ secrets.AUTH_TOKEN }}"
           USE_PULL_REPO: "${{ inputs.USE_PULL_REPO }}"
-          DEPLOY_URL: "${{ inputs.DEPLOY_URL }}"
+          DEPLOY_URL: "${{ env.DEPLOY_URL }}"
           IMAGES: "${{ steps.docker_prepare.outputs.images_with_tags }}"
