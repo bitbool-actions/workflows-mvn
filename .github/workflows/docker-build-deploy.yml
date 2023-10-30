@@ -83,7 +83,7 @@ jobs:
       - name: set deploy url env var from input
         shell: bash
         run: |
-          echo DEPLOY_URL=${{ inputs.DEPLOY_URL }} | tee >> $GITHUB_ENV
+          echo DEPLOY_URL=${{ inputs.DEPLOY_URL }} >> $GITHUB_ENV
         if: ${{ inputs.DEPLOY_URL != 'INVALID' }}
         
       - name: Docker Prepare
