@@ -49,6 +49,14 @@ on:
         required: false
         default: "true"        
         type: string             
+      RUN_BUILD:
+        required: false
+        default: "true"
+        type: string
+      RUN_DEPLOY:
+        required: false
+        default: "true"
+        type: string
     secrets:
       DOCKER_PASSWORD:
         required: true
@@ -100,6 +108,7 @@ jobs:
           DOCKER_REGISTRY: "${{ inputs.DOCKER_REGISTRY }}"
           DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
           TAGS_CSV: "${{ steps.docker_prepare.outputs.tags_only_csv }}"
+        if: ${{ inputs.RUN_BUILD == 'true' }}
 
       - uses: bitbool-actions/docker-compose-deploy@master
         id: docker_deploy
@@ -108,3 +117,4 @@ jobs:
           USE_PULL_REPO: "${{ inputs.USE_PULL_REPO }}"
           DEPLOY_URL: "${{ env.DEPLOY_URL }}"
           IMAGES: "${{ steps.docker_prepare.outputs.images_with_tags }}"
+        if: ${{ inputs.RUN_DEPLOY == 'true' }}
