@@ -49,6 +49,10 @@ on:
         required: false
         default: "true"        
         type: string             
+      DOCKER_TAGS_SEND_COMMIT_HASH_FIRST: 
+        required: false
+        default: "false"        
+        type: string             
       RUN_BUILD:
         required: false
         default: "true"
@@ -81,6 +85,7 @@ jobs:
           DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
           DOCKER_USER: "${{ inputs.DOCKER_USER }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          DOCKER_TAGS_SEND_COMMIT_HASH_FIRST: "${{ inputs.DOCKER_TAGS_SEND_COMMIT_HASH_FIRST }}"
 
       - uses: actions/checkout@v3
 
