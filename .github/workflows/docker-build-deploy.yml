@@ -61,19 +61,15 @@ on:
         required: false
         default: "true"
         type: string
-      MAVEN_USERNAME:
-        required: false
-        default: ""
-        type: string
-      MAVEN_TOKEN:
-        required: false
-        default: ""
-        type: string        
     secrets:
       DOCKER_PASSWORD:
         required: true
       AUTH_TOKEN:
         required: true
+      MAVEN_USERNAME:
+        required: false
+      MAVEN_TOKEN:
+        required: false
 
 jobs:
   mvn_build:
@@ -121,8 +117,8 @@ jobs:
           DOCKER_REGISTRY: "${{ inputs.DOCKER_REGISTRY }}"
           DOCKER_REPO: "${{ inputs.DOCKER_REPO }}"
           TAGS_CSV: "${{ steps.docker_prepare.outputs.tags_only_csv }}"
-          MAVEN_USERNAME: "${{ inputs.MAVEN_USERNAME }}"
-          MAVEN_TOKEN: "${{ inputs.MAVEN_TOKEN }}"
+          MAVEN_USERNAME: "${{ secrets.MAVEN_USERNAME }}"
+          MAVEN_TOKEN: "${{ secrets.MAVEN_TOKEN }}"
         if: ${{ inputs.RUN_BUILD == 'true' }}
 
       - uses: bitbool-actions/docker-compose-deploy@master
