@@ -3,6 +3,10 @@ name: "Maven docker build"
 on:
   workflow_call:
     inputs:
+      RUNS_ON:
+        required: false
+        default: '["ubuntu-latest"]'
+        type: string      
       DOCKER_REGISTRY:
         required: false
         default: "registry.hub.docker.com"
@@ -77,7 +81,7 @@ jobs:
     concurrency: 
       group: ${{ github.ref }}
       cancel-in-progress: true
-    runs-on: [ubuntu-latest] 
+    runs-on: ${{ fromJSON(inputs.RUNS_ON) }}
    
     steps:
         
